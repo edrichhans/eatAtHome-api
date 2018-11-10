@@ -7,9 +7,30 @@ var express = require('express'),
   User = require('./api/models/userModel'),
   bodyParser = require('body-parser');
 
+// var path = require('path');
+// var mongodb = require('mongodb');
+// var ObjectID = mongodb.ObjectID;
+// var db;
+
+var env = process.env.NODE_ENV || 'dev'
+console.log(env);
+
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Tododb');
+
+if (env == 'dev') {
+    mongoose.connect('mongodb://localhost/Tododb');
+}
+else {
+    mongoose.connect(process.env.MONGODB_URI, (err) => {
+        if (err) {
+            console.log('Mongoose connection problem: ' + err);
+        }
+        else {
+            console.log('The Mongoose connection is ready.');
+        }
+    });
+}
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
