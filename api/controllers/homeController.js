@@ -18,6 +18,16 @@ exports.createHome = function(req, res) {
   }
   if (req.body.dinnerTime > 0 && req.body.dinnerTime < 2359 && req.body.askTime > 0 && req.body.askTime < 2359) {
     var newHome = new Home(req.body);
+    var users = req.body.users;
+    for (var i = 0; i < users.length; i++) {
+      Home.findOne({username: users[i].username}).then(existingUser => {
+        if (!existingUser) {
+          valid = false;
+          res.json({message: 'Some users do not exist'});
+          return;
+        }
+      });
+    }
     newHome.save(function(err, home) {
       if (err)
         res.send(err);
