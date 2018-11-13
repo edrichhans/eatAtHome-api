@@ -6,8 +6,8 @@ var mongoose = require('mongoose'),
 exports.listHomes = function(req, res) {
   Home.find({}, function(err, home) {
     if (err)
-      res.send(err);
-    res.json(home);
+      res.status(500).send(err);
+    res.status(200).json(home);
   });
 };
 
@@ -23,15 +23,15 @@ exports.createHome = function(req, res) {
       Home.findOne({username: users[i].username}).then(existingUser => {
         if (!existingUser) {
           valid = false;
-          res.json({message: 'Some users do not exist'});
+          res.status(500).json({message: 'Some users do not exist'});
           return;
         }
       });
     }
     newHome.save(function(err, home) {
       if (err)
-        res.send(err);
-      res.json(home);
+        res.status(500).send(err);
+      res.status(200).json(home);
     });
   }
   else {
@@ -43,8 +43,8 @@ exports.createHome = function(req, res) {
 exports.getHome = function(req, res) {
   Home.findOne({id: req.params.homeId}, function(err, home) {
     if (err)
-      res.send(err);
-    res.json(home);
+      res.status(500).send(err);
+    res.status(200).json(home);
   });
 };
 
@@ -52,16 +52,16 @@ exports.getHome = function(req, res) {
 exports.getDinner = function(req, res) {
   Home.findOne({id: req.params.homeId}, function(err, home) {
     if (err)
-      res.send(err);
-    res.json(home.dinnerTime);
+      res.status(500).send(err);
+    res.status(200).json(home.dinnerTime);
   });
 }
 
 exports.getAsk = function(req, res) {
   Home.findOne({id: req.params.homeId}, function(err, home) {
     if (err)
-      res.send(err);
-    res.json(home.askTime);
+      res.status(500).send(err);
+    res.status(200).json(home.askTime);
   });
 }
 
@@ -70,12 +70,12 @@ exports.updateHome = function(req, res) {
   if (req.body.dinnerTime > 0 && req.body.dinnerTime < 2359 && req.body.askTime > 0 && req.body.askTime < 2359) {
     Home.findOneAndUpdate({id: req.params.homeId}, req.body, {new: true}, function(err, home) {
       if (err)
-        res.send(err);
-      res.json(home);
+        res.status(500).send(err);
+      res.status(200).json(home);
     });
   }
   else {
-    res.json({message: 'Invalid parameters set'})
+    res.status(500).json({message: 'Invalid parameters set'})
   }
 };
 
@@ -85,8 +85,8 @@ exports.deleteHome = function(req, res) {
     id: req.params.homeId
   }, function(err, home) {
     if (err)
-      res.send(err);
-    res.json({ message: 'Home successfully deleted' });
+      res.status(500).send(err);
+    res.status(200).json({ message: 'Home successfully deleted' });
   });
 };
 
@@ -110,16 +110,16 @@ function pushUser(Home, user, req, res) {
         {id: req.params.homeId},
         {$push: {users: user}}, function(err1, home) {
           if (err1) {
-            res.send(err1);
+            res.status(500).send(err1);
           }
           else {
-            res.json({message: 'User Added.'})
+            res.status(200).json({message: 'User Added.'})
           }
         }
       );
     }
     else {
-      res.json({message: 'User does not exist'})
+      res.status(500).json({message: 'User does not exist'})
     }
   });
 }
@@ -130,10 +130,10 @@ exports.updateDinner = function(req, res) {
       {id: req.params.homeId},
       {dinnerTime: req.body.dinnerTime}, function(err, home) {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         }
         else {
-          res.json({message: 'Dinner Time Updated'})
+          res.status(200).json({message: 'Dinner Time Updated'})
         }
       }
     )
@@ -149,16 +149,16 @@ exports.updateAsk = function(req, res) {
       {id: req.params.homeId},
       {dinnerTime: req.body.askTime}, function(err, home) {
         if (err) {
-          res.send(err);
+          res.status(500).send(err);
         }
         else {
-          res.json({message: 'Dinner Time Updated'})
+          res.status(200).json({message: 'Dinner Time Updated'})
         }
       }
     )
   }
   else {
-    res.json({message: 'Invalid ask time'})
+    res.status(500).json({message: 'Invalid ask time'})
   }
 }
 
